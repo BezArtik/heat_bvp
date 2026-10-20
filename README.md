@@ -1,15 +1,8 @@
 # heat_bvp
 
-================================================================================
-heat_bvp: Stationary Heat Equation Solver
-================================================================================
-
 A C++23 command-line utility for solving 1D boundary value problems for the
 stationary heat equation with piecewise coefficients, using the finite volume
 (balance) method and the Thomas algorithm.
-
-The project includes a Python-based toolchain for automated testing,
-visualization, and report generation.
 
 --------------------------------------------------------------------------------
 1. MATHEMATICAL FORMULATION
@@ -21,7 +14,7 @@ The solver targets the following boundary value problem:
     u(0) = mu1,   u(1) = mu2
 
 The coefficients k(x), q(x), and f(x) are piecewise functions with a
-discontinuity at a given point xi (e.g., xi = 1/sqrt(3) for variant 8).
+discontinuity at a given point xi.
 The solution u(x) and the heat flux w(x) = -k(x)*u'(x) are continuous.
 
 The problem is discretized using a conservative finite-difference scheme
@@ -36,13 +29,13 @@ which is solved using the O(n) Thomas algorithm.
     |-- CMakeLists.txt          # Root build file
     |-- CMakePresets.json      # Compiler presets (clang-release, clang-debug)
     |
-    |-- include/                # C++ Header files
+    |-- include/                # Header files
     |   |-- app/                # Orchestration and refinement logic
     |   |-- core/               # Types, errors, config structures
     |   |-- io/                 # Config loader, CSV writer
     |   |-- math/               # Grid, quadrature, tridiagonal solver, scheme, BVP solver
     |
-    |-- src/                    # C++ Source files
+    |-- src/                    # Source files
         |-- app/
         |-- io/
         |-- problems/
@@ -99,34 +92,34 @@ reference solution, and error) are saved to the path specified in the config.
 6. CONFIGURATION FORMAT (.toml)
 --------------------------------------------------------------------------------
 
-[problem]
-a  = 0.0
-b  = 1.0
-xi = 0.5773502691896257
-mu1 = 2.0
-mu2 = 1.0
-boundary_type = "dirichlet"
-# Optional analytical expression for test mode (leave empty for main mode)
-analytical = "(x <= xi) ? (...) : (...)"
+    [problem]
+    a  = 0.0
+    b  = 1.0
+    xi = 0.5773502691896257
+    mu1 = 2.0
+    mu2 = 1.0
+    boundary_type = "dirichlet"
+    // Optional analytical expression for test mode (leave empty for main mode)
+    analytical = "(x <= xi) ? (...) : (...)"
 
-[problem.left]
-k = "exp(xi^2)"
-q = "xi^2"
-f = "xi^2 - 1.0"
+    [problem.left]
+    k = "exp(xi^2)"
+    q = "xi^2"
+    f = "xi^2 - 1.0"
 
-[problem.right]
-k = "xi^2"
-q = "1.0 + xi^4"
-f = "1.0"
+    [problem.right]
+    k = "xi^2"
+    q = "1.0 + xi^4"
+    f = "1.0"
 
-[solver]
-n     = 10
-eps   = 5e-7
-max_n = 100000
+    [solver]
+    n     = 10
+    eps   = 5e-7
+    max_n = 100000
 
-[output]
-path = "labwork/output/test.csv"
-print_every = 1
+    [output]
+    path = "labwork/output/test.csv"
+    print_every = 1
 
 --------------------------------------------------------------------------------
 8. LICENSE
