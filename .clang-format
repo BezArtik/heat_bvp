@@ -1,0 +1,21 @@
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+AccessModifierOffset: -4
+BreakBeforeBraces: Attach
+NamespaceIndentation: None
+
+
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"(.*)\.hpp"$'
+    Priority: 1
+  - Regex: '^"(core|math|io|app)/'
+    Priority: 2
+  - Regex: '^<'
+    Priority: 3
+
+AllowShortFunctionsOnASingleLine: Inline
