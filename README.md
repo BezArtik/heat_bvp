@@ -62,9 +62,11 @@ Configure and build the project in release mode:
     cmake --build --preset clang-release
 
 The executable will be located at:
+
     out/build/clang-release/heat_app
 
 For a debug build with sanitizers:
+
     cmake --preset clang-debug
     cmake --build --preset clang-debug
 
