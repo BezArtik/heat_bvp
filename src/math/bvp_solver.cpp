@@ -24,13 +24,14 @@ auto solve_thomas(const tridiagonal_system& sys) {
     c_prime[0] = sys.upper_[0] / sys.main_[0];
     y[0] = sys.rhs_[0] / sys.main_[0];
 
-    for (std::size_t i = 1; i < n - 1; ++i) {
+    for (const auto i : std::views::iota(1ul, n - 1)) {
         const auto denom = sys.main_[i] - sys.lower_[i - 1] * c_prime[i - 1];
         c_prime[i] = sys.upper_[i] / denom;
         y[i] = (sys.rhs_[i] - sys.lower_[i - 1] * y[i - 1]) / denom;
     }
 
-    y[n - 1] = (sys.rhs_[n - 1] - sys.lower_[n - 2] * y[n - 2]) / sys.main_[n - 1] - sys.lower_[n - 2] * c_prime[n - 2];
+    y[n - 1] =
+        (sys.rhs_[n - 1] - sys.lower_[n - 2] * y[n - 2]) / (sys.main_[n - 1] - sys.lower_[n - 2] * c_prime[n - 2]);
 
     for (std::size_t i = n - 1; i > 0; --i) y[i - 1] -= c_prime[i - 1] * y[i];
 
@@ -67,7 +68,7 @@ struct bvp_solver::impl {
         compile(cfg_.right_.f_, f2_expr_, "right.f");
     }
 
-    auto operator()(exprtk::expression<scalar>& expr, scalar x) const {
+    auto eval(exprtk::expression<scalar>& expr, scalar x) const {
         x_var_ = x;
         return expr();
     }
@@ -88,19 +89,19 @@ bvp_solver::result bvp_solver::solve(std::size_t n) const {
 
     const auto g = grid{cfg.a_, cfg.b_, n, cfg.xi_};
 
-    auto k1 = [&](scalar x) { return impl(impl.k1_expr_, x); };
-    auto k2 = [&](scalar x) { return impl(impl.k2_expr_, x); };
-    auto q1 = [&](scalar x) { return impl(impl.q1_expr_, x); };
-    auto q2 = [&](scalar x) { return impl(impl.q2_expr_, x); };
-    auto f1 = [&](scalar x) { return impl(impl.f1_expr_, x); };
-    auto f2 = [&](scalar x) { return impl(impl.f2_expr_, x); };
+    auto k1 = [&impl](scalar x) { return impl.eval(impl.k1_expr_, x); };
+    auto k2 = [&impl](scalar x) { return impl.eval(impl.k2_expr_, x); };
+    auto q1 = [&impl](scalar x) { return impl.eval(impl.q1_expr_, x); };
+    auto q2 = [&impl](scalar x) { return impl.eval(impl.q2_expr_, x); };
+    auto f1 = [&impl](scalar x) { return impl.eval(impl.f1_expr_, x); };
+    auto f2 = [&impl](scalar x) { return impl.eval(impl.f2_expr_, x); };
 
-    auto sys = assemble_scheme(g, k1, k2, q1, q2, f1, f2, cfg.mu1_, cfg.mu2_);
+    const auto sys = assemble_scheme(g, k1, k2, q1, q2, f1, f2, cfg.mu1_, cfg.mu2_);
 
-    auto v = solve_thomas(sys);
+    const auto v = solve_thomas(sys);
     auto x = vector{};
     x.reserve(g.size());
-    for (std::size_t i = 0; i < g.size(); ++i) x.push_back(g.x(i));
+    for (const auto i : std::views::iota(0ul, g.size())) x.push_back(g.x(i));
 
     return {x, v};
 }

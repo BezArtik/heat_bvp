@@ -30,7 +30,6 @@ add_library(exprtk::exprtk ALIAS exprtk)
 
 add_library(heat_core STATIC
     src/io/config_loader.cpp
-    src/io/writer.cpp
     src/math/bvp_solver.cpp
     src/app/app.cpp
 )

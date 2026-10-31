@@ -27,8 +27,8 @@ namespace {
 // --- Typed accessors ---
 
 scalar get_float(const toml::table& t, std::string_view path) {
-    auto view = t.at_path(path);
-    auto node = view.as_floating_point();
+    const auto view = t.at_path(path);
+    const auto node = view.as_floating_point();
     if (!node) {
         if (view) wrong_type(path, "a floating-point number");
         missing_field(path);
@@ -37,8 +37,8 @@ scalar get_float(const toml::table& t, std::string_view path) {
 }
 
 std::size_t get_size(const toml::table& t, std::string_view path) {
-    auto view = t.at_path(path);
-    auto node = view.as_integer();
+    const auto view = t.at_path(path);
+    const auto node = view.as_integer();
     if (!node) {
         if (view) wrong_type(path, "an integer");
         missing_field(path);
@@ -50,8 +50,8 @@ std::size_t get_size(const toml::table& t, std::string_view path) {
 }
 
 std::string get_string(const toml::table& t, std::string_view path) {
-    auto view = t.at_path(path);
-    auto node = view.as_string();
+    const auto view = t.at_path(path);
+    const auto node = view.as_string();
     if (!node) {
         if (view) wrong_type(path, "a string");
         missing_field(path);

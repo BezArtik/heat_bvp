@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <span>
 #include <vector>
 
 namespace heat {
@@ -14,5 +15,8 @@ using scalar = double;
 
 /// Vector of scalars.
 using vector = std::vector<scalar>;
+
+/// Span of scalars
+using span = std::span<const scalar>;
 
 }  // namespace heat
